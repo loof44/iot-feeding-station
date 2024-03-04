@@ -1,13 +1,8 @@
-/**
- * Complete project details at https://RandomNerdTutorials.com/esp8266-load-cell-hx711/
- * 
- * HX711 library for Arduino - example file
- * https://github.com/bogde/HX711
- *
- * MIT License
- * (c) 2018 Bogdan Necula
- *
-**/
+//American University In Dubai
+//Project: IoT Based Smart Camel Feeder
+//Group Members: Khalifa AlSaadi, Nareeman Behiry, Alia Al Darweesh, Maryam Bin Hashem
+//Senior Design Project
+
 #include <Arduino.h>
 #include "HX711.h"
 #include "scale.h"
