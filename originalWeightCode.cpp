@@ -1,4 +1,4 @@
-#include <LiquidCrystal.h>  // Include the LiquidCrystal library for LCD display
+// #include <LiquidCrystal.h>  // Include the LiquidCrystal library for LCD display
 
 // Initialize the LCD display with the pins it's connected to
 LiquidCrystal lcd(8, 9, 10, 11, 12, 13);
