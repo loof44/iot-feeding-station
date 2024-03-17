@@ -47,8 +47,8 @@ String tag;
 
 // Your WiFi credentials.
 // Set password to "" for open networks.
-char ssid[] = "Khalifa";
-char pass[] = "0509292290";
+char ssid[] = "xxxxxxxx";
+char pass[] = "xxxxxxxx";
 
 void setup()
 {
