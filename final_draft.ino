@@ -47,8 +47,8 @@ String tag;
 
 // Your WiFi credentials.
 // Set password to "" for open networks.
-char ssid[] = "xxxxxxxx";
-char pass[] = "xxxxxxxx";
+char ssid[] = "Khalifa";
+char pass[] = "0509292290";
 
 void setup()
 {
@@ -164,7 +164,7 @@ void send_data(struct session_info session){
   char mqtt_message[128];
   serializeJson(doc, mqtt_message);
 
-  publishMessage("esp8266_data", mqtt_message, true);
+  //publishMessage("esp8266_data", mqtt_message, true);
 
   delay(5000);
 
@@ -207,31 +207,31 @@ BLYNK_WRITE(V3)
   Serial.println(pinValue);
 }
 
-bool camelFinishedEating() {
-  time_in_seconds = millis()/1000;
-  // Read motion sensor
-  int motionValue = digitalRead(motionSensorPin);
+// bool camelFinishedEating() {
+//   int time_in_seconds = millis()/1000;
+//   // Read motion sensor
+//   int motionValue = digitalRead(motionSensorPin);
 
-  // Read weight sensor
-  int currentWeight = analogRead(weightSensorPin);
+//   // Read weight sensor
+//   float currentWeight = analogRead(weightSensorPin);
 
-  // Wait for a brief moment to stabilize readings (optional)
-  delay(100);
+//   // Wait for a brief moment to stabilize readings (optional)
+//   delay(100);
 
-  // Read weight sensor again after a brief delay
-  int newWeight = analogRead(weightSensorPin);
+//   // Read weight sensor again after a brief delay
+//   int newWeight = analogRead(weightSensorPin);
 
-  // Calculate weight change
-  int weightChange = abs(newWeight - currentWeight);
+//   // Calculate weight change
+//   float weightChange = abs(newWeight - currentWeight);
 
-  // Check if there is no motion and no significant change in weight
-  if (motionValue == LOW && weightChange < weightChangeThreshold) {
-    return true;  // Camel has finished eating
-  } else {
-    return false;  // Camel is still eating
-    //write the struct to send data.
-  }
-}
+//   // Check if there is no motion and no significant change in weight
+//   if (motionValue == LOW && weightChange < weightChangeThreshold) {
+//     return true;  // Camel has finished eating
+//   } else {
+//     return false;  // Camel is still eating
+//     //write the struct to send data.
+//   }
+// }
 
 BLYNK_WRITE(V2)
 {
@@ -250,6 +250,6 @@ BLYNK_WRITE(V1)
   String i = param.asStr();
   // double d = param.asDouble();
   Serial.print("RFID Number: ");
-  Serial.println(pinValue);
-  return i;
+  //Serial.println(pinValue);
+  //return i;
 }
