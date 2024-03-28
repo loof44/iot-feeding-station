@@ -1,12 +1,10 @@
-/* Read RFID Tag with RC522 RFID Reader
- *  Made by miliohm.com
- */
+
 #include <Arduino.h>
 #include <SPI.h>
 #include <MFRC522.h>
-constexpr uint8_t RST_PIN = D3;     // Configurable, see typical pin layout above
-constexpr uint8_t SS_PIN = D4;     // Configurable, see typical pin layout above
-MFRC522 rfid(SS_PIN, RST_PIN); // Instance of the class
+constexpr uint8_t RST_PIN = D3;     
+constexpr uint8_t SS_PIN = D4;     
+MFRC522 rfid(SS_PIN, RST_PIN); 
 MFRC522::MIFARE_Key key;
 String tag;
 void setup() {
