@@ -18,7 +18,7 @@ The copyright for this thesis is held by the American University in Dubai.
 
 ## Contact
 
-For inquiries regarding commercial or other use of this thesis, please contact [insert contact information for the American University in Dubai].
+For inquiries regarding commercial or other use of this thesis, please contact vpangracious@aud.edu
 
 ## Disclaimer
 
