@@ -1,19 +1,12 @@
 /*************************************************************
 
-  You’ll need:
-   - Blynk IoT app (download from App Store or Google Play)
-   - ESP8266 board
-   - Decide how to connect to Blynk
-     (USB, Ethernet, Wi-Fi, Bluetooth, ...)
-
-  There is a bunch of great example sketches included to show you how to get
-  started. Think of them as LEGO bricks  and combine them as you wish.
-  For example, take the Ethernet Shield sketch and combine it with the
-  Servo example, or choose a USB sketch and add a code from SendData
-  example.
+  American University In Dubai
+  Project: IoT Based Smart Camel Feeder
+  Group Members: Khalifa AlSaadi, Nareeman Behiry, Alia Al Darweesh, Maryam Bin Hashem
+  Senior Design Project: Iot-Enabled-Feeding-Station
  *************************************************************/
 
-/* Fill-in information from Blynk Device Info here */
+
 #define BLYNK_TEMPLATE_ID           "TMPL6CrW6gMG6"
 #define BLYNK_TEMPLATE_NAME         "khalifa Testing"
 #define BLYNK_AUTH_TOKEN            "6UEbfWzQKAJUMLFtyyX4Cwaqjtjx8JvA"
@@ -29,41 +22,75 @@
 #include "HX711.h"
 #include <Servo.h>
 #include <ArduinoJson.h>
+#include <RFID.h>
+
+
 
 // HX711 circuit wiring
 const int LOADCELL_DOUT_PIN = 12;
 const int LOADCELL_SCK_PIN = 13;
-Servo myservo;
-HX711 scale;
+
+// Declare and Initialize motion sensor pin to D1
+int motionSensorPin = D1; 
+
+// Set Reset pin and slave pin for RFID
 constexpr uint8_t RST_PIN = D3;     // Configurable, see typical pin layout above
 constexpr uint8_t SS_PIN = D4;     // Configurable, see typical pin layout above
+
+// Create an instance of the class servo named myservo
+Servo myservo;
+
+// Create an instance of the class HX711 named scale
+HX711 scale;
+
+// Create an instance of the class MFRC522 named rfid with the SS_PIN and RST_PIN
 MFRC522 rfid(SS_PIN, RST_PIN); // Instance of the class
+
+// Create an instance of the class MFRC522::MIFARE_Key named key
 MFRC522::MIFARE_Key key;
 
-int motionSensorPin = D1; 
+
+// Create an instance of the class BlynkTimer named timer
+// BlynkTimer is a blynk class that allows you to start, stop, and run timers.
 BlynkTimer timer;
+
+// create a variable to store the RFID tag
 String tag;
 
 
 // Your WiFi credentials.
 // Set password to "" for open networks.
 char ssid[] = "Khalifa";
-char pass[] = "0509292290";
+char pass[] = "ENTER_PASSWORD_HERE";
+
+//setup function runs once when you press reset or power the board
 
 void setup()
 {
   // Debug console
   Serial.begin(115200);
+  // Set the motion sensor pin as an Input pin
   pinMode(motionSensorPin, INPUT);
+  
+  /* Blynk.begin is a function that initializes the Blynk library and establishes a connection to the Blynk server
+  It takes the BLYNK_AUTH_TOKEN, ssid, and pass as arguments.
 
+  You can also specify server:
+  Blynk.begin(BLYNK_AUTH_TOKEN, ssid, pass, "blynk.cloud", 80);
+  Blynk.begin(BLYNK_AUTH_TOKEN, ssid, pass, IPAddress(192,168,1,100), 8080);
+  */
 
   Blynk.begin(BLYNK_AUTH_TOKEN, ssid, pass);
   // You can also specify server:
   //Blynk.begin(BLYNK_AUTH_TOKEN, ssid, pass, "blynk.cloud", 80);
   //Blynk.begin(BLYNK_AUTH_TOKEN, ssid, pass, IPAddress(192,168,1,100), 8080);
-  
+
+
+  //Initializes SPI Bus and MFRC522 for RFID functionality
   SPI.begin(); // Init SPI bus
   rfid.PCD_Init(); // Init MFRC522
+
+  // Initialize load cell and set scale
   scale.begin(LOADCELL_DOUT_PIN, LOADCELL_SCK_PIN);
   scale.set_scale(83);
   scale.tare();
@@ -72,28 +99,32 @@ void setup()
 
 void loop()
 {
+  // Call the Blynk.run() function to establish a connection to the Blynk server
   Blynk.run();
+  // Call the timer.run() function to run the timer
   timer.run();
   // You can inject your own code or combine it with other sketches.
   // Check other examples on how to communicate with Blynk. Remember
   // to avoid delay() function!
   timer.setInterval(5000L, motion);
 }
-void RFID() {
-  if ( ! rfid.PICC_IsNewCardPresent())
-    return;
-  if (rfid.PICC_ReadCardSerial()) {
-    for (byte i = 0; i < 4; i++) {
-      tag += rfid.uid.uidByte[i];
-    }
-    Serial.println(tag);
-    Blynk.virtualWrite(V1, tag);
-    tag = "";
-    rfid.PICC_HaltA();
-    rfid.PCD_StopCrypto1();
-  }
-}
 
+/************************************************************************************************/
+// void RFID() {
+//   if ( ! rfid.PICC_IsNewCardPresent())
+//     return;
+//   if (rfid.PICC_ReadCardSerial()) {
+//     for (byte i = 0; i < 4; i++) {
+//       tag += rfid.uid.uidByte[i];
+//     }
+//     Serial.println(tag);
+//     Blynk.virtualWrite(V1, tag);
+//     tag = "";
+//     rfid.PICC_HaltA();
+//     rfid.PCD_StopCrypto1();
+//   }
+// }
+/************************************************************************************************/
 void motion() {
 
     // Read the value from the motion sensor: HIGH when motion is detected, otherwise LOW.
@@ -121,6 +152,7 @@ void motion() {
     // Wait for a second before checking again
     delay(5000);
 }
+/************************************************************************************************/
 void scale_fn() {
   Serial.print("one reading:\t");
   Serial.print(scale.get_units(), 1);
@@ -132,7 +164,7 @@ void scale_fn() {
   delay(5000);
   scale.power_up();
 }
-
+/************************************************************************************************/
 struct session_info {
   int entryId;
   String camelID;
@@ -141,6 +173,8 @@ struct session_info {
   int consumptionDuration;
   
 };
+
+/************************************************************************************************/
 
 void send_data(struct session_info session){
   int eID = session.entryId;
@@ -169,18 +203,19 @@ void send_data(struct session_info session){
   delay(5000);
 
 }
+/************************************************************************************************/
+// Fix the saveData function
+// void saveData(struct session_info session, int duration){
+//   int e_id = 0;
+//   session.entryId = e_id;
+//   e_id++;
+//   session.camelID = BLYNK_WRITE(V1);
+//   session.Consumption = BLYNK_WRITE(V2);
+//   session.foodDropped = BLYNK_WRITE(V3);
+//   session.consumptionDuration = duration;
+// }
 
-void saveData(struct session_info session, int duration){
-  int e_id = 0;
-  session.entryId = e_id;
-  e_id++;
-  session.camelID = BLYNK_WRITE(V1);
-  session.Consumption = BLYNK_WRITE(V2);
-  session.foodDropped = BLYBK_WRITE(V3);
-  session.consumptionDuration = duration;
-}
-
-
+/************************************************************************************************/
 
 
 void motor(){
@@ -197,6 +232,8 @@ void motor(){
   }   
 }
 
+/************************************************************************************************/
+
 BLYNK_WRITE(V3)
 {
   int pinValue = param.asInt(); // assigning incoming value from pin V1 to a variable
@@ -206,7 +243,7 @@ BLYNK_WRITE(V3)
   Serial.print("Chambers to drop: ");
   Serial.println(pinValue);
 }
-
+/************************************************************************************************/
 // bool camelFinishedEating() {
 //   int time_in_seconds = millis()/1000;
 //   // Read motion sensor
@@ -232,7 +269,7 @@ BLYNK_WRITE(V3)
 //     //write the struct to send data.
 //   }
 // }
-
+/************************************************************************************************/
 BLYNK_WRITE(V2)
 {
   int pinValue = param.asInt(); // assigning incoming value from pin V1 to a variable
@@ -242,7 +279,7 @@ BLYNK_WRITE(V2)
   Serial.print("Chambers to drop: ");
   Serial.println(pinValue);
 }
-
+/************************************************************************************************/
 BLYNK_WRITE(V1)
 {
   //int pinValue = param.asInt(); // assigning incoming value from pin V1 to a variable
@@ -253,3 +290,5 @@ BLYNK_WRITE(V1)
   //Serial.println(pinValue);
   //return i;
 }
+
+

@@ -1,4 +1,5 @@
-// Include Arduino library
+#ifndef MOTION_h
+#define MOTION_h
 #include <Arduino.h>
 
 // Declare and Initialize motion sensor pin to D1
@@ -8,7 +9,7 @@ int motionSensorPin = D1;
 int ledPin = LED_BUILTIN; 
 
 
-void setup() {
+void motionSetup() {
 
     // Begin serial communication at 9600 bits per second
     Serial.begin(115200); 
@@ -21,7 +22,7 @@ void setup() {
 
 }
 
-void loop() {
+void motionSensor() {
 
     // Read the value from the motion sensor: HIGH when motion is detected, otherwise LOW.
     int motionSensorValue = digitalRead(motionSensorPin);
@@ -46,3 +47,5 @@ void loop() {
     // Wait for a second before checking again
     delay(1000); 
 }
+
+#endif
