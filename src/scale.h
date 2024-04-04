@@ -54,15 +54,17 @@ void scaleSetup() {
   Serial.println("Readings:");
 }
 
-void loop() {
+float readScale() {
   Serial.print("one reading:\t");
   Serial.print(scale.get_units(), 1);
   Serial.print("\t| average:\t");
   Serial.println(scale.get_units(10), 5);
+  float weight = scale.get_units();
 
   scale.power_down();             // put the ADC in sleep mode
   delay(5000);
   scale.power_up();
+  return (weight);
 }
 
 #endif

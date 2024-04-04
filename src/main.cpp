@@ -22,6 +22,7 @@
 #include <Arduino.h>
 #include <network.h>
 #include <time.h>
+#include <motor.h>
 
 #include <Arduino.h>
 #include <ArduinoJson.h>
@@ -66,11 +67,63 @@ void loop() {
     Serial.println("camel ID:");
     Serial.println(camelUID);
   }
+  int time = getTime();
+  int startTime;
+  float weight;
+  int consumptionTime;
+  dropFood(time, camelUID);
+  weight = readScale();
+  while (camelFinishedEating() == false) {
+    weight = readScale();
+    Serial.println("Camel is still eating");
+    Serial.println("Current weight: ");
+    Serial.println(weight);
+    consumptionTime = millis()/1000;
+  }
+  if (camelFinishedEating() == true) {
+    Serial.println("Camel has finished eating");
+    Serial.println("Current weight: ");
+  }
+
 
   
 }
 
 // Determine how much food to drop
 void dropFood(int time, String ID) {
-  
+  if (00 < time < 12){
+    motor(1);
+    Serial.println("Morning: Dropping 2.5KG of food for camel with ID: " + ID);
+  }
+  else if (12 < time < 24){
+    motor(2);
+    Serial.println("Evening: Dropping 5KG of food for camel with ID: " + ID);
+  }
+}
+bool camelFinishedEating() {
+  float weightChangeThreshold = 0.1; // change in weight threshold
+  int time_in_seconds = millis()/1000;
+  // Read motion sensor
+  int motionValue = digitalRead(motionSensorPin);
+
+  // Read weight sensor
+  float currentWeight = readScale();
+
+  // Wait for a brief moment to stabilize readings (optional)
+  delay(100);
+
+  // Read weight sensor again after a brief delay
+  int newWeight = readScale();
+
+  // Calculate weight change
+  float weightChange = abs(newWeight - currentWeight);
+
+  // Check if there is no motion and no significant change in weight
+  if (motionValue == LOW && weightChange < weightChangeThreshold) {
+    
+    return true;  // Camel has finished eating
+  } else {
+    return false;  // Camel is still eating
+    //write the struct to send data.
+  }
 }
