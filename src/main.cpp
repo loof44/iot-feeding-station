@@ -37,6 +37,14 @@ BlynkTimer timer;
 //Define datastreams
 String camelUID;
 
+struct session_info {
+  int entryId;
+  String camelID;
+  float Consumption;
+  int foodDropped;
+  int consumptionDuration;
+  
+};
 
 void setup() {
   // put your setup code here, to run once:
@@ -50,6 +58,7 @@ void setup() {
 }
 
 void loop() {
+  session_info session;
   bool motionDetected = false;
   // put your main code here, to run repeatedly:
   Blynk.run();
@@ -63,7 +72,8 @@ void loop() {
   
   }
   if (motionDetected == true) {
-    camelUID = RFID();
+    
+    session.camelID = camelUID;
     Serial.println("camel ID:");
     Serial.println(camelUID);
   }
@@ -84,6 +94,16 @@ void loop() {
     Serial.println("Camel has finished eating");
     Serial.println("Current weight: ");
   }
+
+  //put the below in a function and send upload data once the entire struct has been filled. beloow there is a function.
+  session.camelID = camelUID;
+  session.Consumption = weight;
+  session.consumptionDuration = consumptionTime;
+  session.foodDropped = 0//food dropped;
+  //session.datetime = getTime();
+
+
+
 
 
   
@@ -127,3 +147,35 @@ bool camelFinishedEating() {
     //write the struct to send data.
   }
 }
+
+//fix the below function to send the struct to the server
+void send_data(struct session_info session){
+  
+  int eID = session.entryId;
+  String camelID = session.camelID;
+  float Consumotion = session.Consumption;
+  int foodDropped = session.foodDropped;
+  int consumptionDuration = session.consumptionDuration;
+
+  
+   
+  DynamicJsonDocument doc(1024);
+  
+
+  doc["deviceId"] = "NodeMCU";
+  doc["Entry"] = eID;
+  doc["camel ID "] = camelID;
+  doc["Consumed Amount"] = Consumotion;
+  doc["Food Dropped"] = foodDropped;
+  doc["Consumption Duration"] = consumptionDuration;
+
+  char mqtt_message[128];
+  serializeJson(doc, mqtt_message);
+
+  //publishMessage("esp8266_data", mqtt_message, true);
+
+  delay(5000);
+
+}
+
+// remaining is sending data to blynk server
