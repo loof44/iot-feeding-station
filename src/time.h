@@ -103,7 +103,7 @@ void timeSetup() {
 // }
 
 
-void getTime() {
+int getTime() {
   const char* ssid = "loof";
   const char* password = "123456789";
 
@@ -163,5 +163,7 @@ void getTime() {
   Serial.println("");
 
   delay(2000);
+
+  return currentHour;
 }
 #endif

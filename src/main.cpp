@@ -99,14 +99,8 @@ void loop() {
   session.camelID = camelUID;
   session.Consumption = weight;
   session.consumptionDuration = consumptionTime;
-  session.foodDropped = 0//food dropped;
+  session.foodDropped = 0; //food dropped
   //session.datetime = getTime();
-
-
-
-
-
-  
 }
 
 // Determine how much food to drop
