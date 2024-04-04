@@ -109,9 +109,13 @@ void dropFood(int time, String ID) {
     motor(1);
     Serial.println("Morning: Dropping 2.5KG of food for camel with ID: " + ID);
   }
-  else if (12 < time < 24){
+  else if (12 < time < 15){
     motor(2);
-    Serial.println("Evening: Dropping 5KG of food for camel with ID: " + ID);
+    Serial.println("Afternoon: Dropping 5KG of food for camel with ID: " + ID);
+  }
+  else{
+    motor(1);
+    Serial.println("Evening: Dropping 2.5KG of barley for camel with ID: " + ID);
   }
 }
 bool camelFinishedEating() {
