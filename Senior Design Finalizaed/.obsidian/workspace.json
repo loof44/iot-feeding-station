@@ -1,0 +1,171 @@
+{
+  "main": {
+    "id": "929ea814cd465930",
+    "type": "split",
+    "children": [
+      {
+        "id": "96231f413ca07409",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "a786d858628970e3",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "Components/PIR Motion Sensor Module.md",
+                "mode": "source",
+                "source": false
+              }
+            }
+          }
+        ]
+      }
+    ],
+    "direction": "vertical"
+  },
+  "left": {
+    "id": "75bc75a0f7c88ae0",
+    "type": "split",
+    "children": [
+      {
+        "id": "963303ea143ba080",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "b0837a9abc9377b5",
+            "type": "leaf",
+            "state": {
+              "type": "file-explorer",
+              "state": {
+                "sortOrder": "alphabetical"
+              }
+            }
+          },
+          {
+            "id": "78520bed9a1c4ec9",
+            "type": "leaf",
+            "state": {
+              "type": "search",
+              "state": {
+                "query": "",
+                "matchingCase": false,
+                "explainSearch": false,
+                "collapseAll": false,
+                "extraContext": false,
+                "sortOrder": "alphabetical"
+              }
+            }
+          },
+          {
+            "id": "417e9ba01b6dedb1",
+            "type": "leaf",
+            "state": {
+              "type": "bookmarks",
+              "state": {}
+            }
+          }
+        ]
+      }
+    ],
+    "direction": "horizontal",
+    "width": 300
+  },
+  "right": {
+    "id": "7e4e06cfb397cf2f",
+    "type": "split",
+    "children": [
+      {
+        "id": "b19e4ac90241ec61",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "af50fe907435109b",
+            "type": "leaf",
+            "state": {
+              "type": "backlink",
+              "state": {
+                "file": "Components/PIR Motion Sensor Module.md",
+                "collapseAll": false,
+                "extraContext": false,
+                "sortOrder": "alphabetical",
+                "showSearch": false,
+                "searchQuery": "",
+                "backlinkCollapsed": false,
+                "unlinkedCollapsed": true
+              }
+            }
+          },
+          {
+            "id": "d96fc35addc70340",
+            "type": "leaf",
+            "state": {
+              "type": "outgoing-link",
+              "state": {
+                "file": "Components/PIR Motion Sensor Module.md",
+                "linksCollapsed": false,
+                "unlinkedCollapsed": true
+              }
+            }
+          },
+          {
+            "id": "527f2dd685b48df8",
+            "type": "leaf",
+            "state": {
+              "type": "tag",
+              "state": {
+                "sortOrder": "frequency",
+                "useHierarchy": true
+              }
+            }
+          },
+          {
+            "id": "f8cc04ed58a30ed9",
+            "type": "leaf",
+            "state": {
+              "type": "outline",
+              "state": {
+                "file": "Components/PIR Motion Sensor Module.md"
+              }
+            }
+          }
+        ]
+      }
+    ],
+    "direction": "horizontal",
+    "width": 300,
+    "collapsed": true
+  },
+  "left-ribbon": {
+    "hiddenItems": {
+      "switcher:Open quick switcher": false,
+      "graph:Open graph view": false,
+      "canvas:Create new canvas": false,
+      "daily-notes:Open today's daily note": false,
+      "templates:Insert template": false,
+      "command-palette:Open command palette": false
+    }
+  },
+  "active": "a786d858628970e3",
+  "lastOpenFiles": [
+    "Welcome.md",
+    "Components/PIR Motion Sensor Module.md",
+    "Components/Load Cell.md",
+    "Components/Node MCU.md",
+    "Components/Servo Motor.md",
+    "Components/RFID.md",
+    "Untitled.md",
+    "Assets/Pasted image 20240407194454.png",
+    "Assets/Pasted image 20240407194417.png",
+    "Assets/Pasted image 20240407194334.png",
+    "Assets/Pasted image 20240407194141.png",
+    "Assets",
+    "Assets/Pasted image 20240407193923.png",
+    "Assets/Pasted image 20240407193856.png",
+    "Assets/BISS0001.pdf",
+    "Assets/Pasted image 20240407193758.png",
+    "Assets/Pasted image 20240407193317.png",
+    "Assets/Pasted image 20240407192833.png",
+    "Components"
+  ]
+}
