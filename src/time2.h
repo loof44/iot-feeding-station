@@ -103,7 +103,7 @@ void timeSetup(bool &state) {
 // }
 
 
-int getTime() {
+void getTime(int &hour, int &minute, int &second, int &day, int &month, int &year) {
   const char* ssid = "loof";
   const char* password = "123456789";
 
@@ -170,7 +170,5 @@ int getTime() {
   
 
   delay(2000);
-
-  return currentHour;
 }
 #endif

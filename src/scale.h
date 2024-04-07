@@ -11,7 +11,7 @@ const int LOADCELL_SCK_PIN = 13;
 
 HX711 scale;
 
-void scaleSetup() {
+void scaleSetup(bool &state) {
   Serial.begin(115200);
   Serial.println("HX711 Demo");
   Serial.println("Initializing the scale");
@@ -52,6 +52,7 @@ void scaleSetup() {
             // by the SCALE parameter set with set_scale
 
   Serial.println("Readings:");
+  state = true;
 }
 
 float readScale() {

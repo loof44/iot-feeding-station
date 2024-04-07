@@ -27,6 +27,6 @@
 #ifndef NETWORK_H
 #define NETWORK_H
 
-void connectToNetwork(const char* ssid, const char* password);
+void connectToNetwork(const char* ssid, const char* password, bool &state);
 
 #endif

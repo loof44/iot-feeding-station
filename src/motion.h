@@ -9,16 +9,18 @@ int motionSensorPin = D1;
 int ledPin = LED_BUILTIN; 
 
 
-void motionSetup() {
+void motionSetup(bool &state) {
 
     // Begin serial communication at 9600 bits per second
-    Serial.begin(115200); 
+   
 
     // Set the motion sensor pin as an Input pin
     pinMode(motionSensorPin, INPUT);
 
     // Set the built-in LED pin as an Output pin
     pinMode(ledPin, OUTPUT); 
+    state = true;
+    
 
 }
 
