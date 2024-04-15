@@ -7,9 +7,9 @@ This project was developed by Khalifa AlSaadi, Nareeman Beheiry, Alia AlDarweesh
 The following individuals contributed to the creation of this project:
 
 - Khalifa AlSaadi - Computer Engineer
-- Nareeman.behiry - Computer Engineer
-- [Ommitted] - Computer Engineer
-- [Ommitted] - Electrical Engineer
+- Nareeman behiry - Computer Engineer
+- Alia AlNuaimi - Computer Engineer
+- Maryam Bin Hashem - Electrical Engineer
 
 ## University
 
