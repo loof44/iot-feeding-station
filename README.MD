@@ -7,9 +7,9 @@ This project was developed by Khalifa AlSaadi, Nareeman Beheiry, Alia AlDarweesh
 The following individuals contributed to the creation of this project:
 
 - Khalifa AlSaadi - Computer Engineer
-- Nareeman Behiry - Computer Engineer
-- Alia Al Darweesh - Computer Engineer
-- Maryam Bin Hashem - Electrical Engineer
+- Nareeman.behiry - Computer Engineer
+- [Ommitted] - Computer Engineer
+- [Ommitted] - Electrical Engineer
 
 ## University
 
@@ -19,8 +19,8 @@ This project was undertaken at the American University In Dubai with collaborati
 
 We'd like to express our gratitude to:
 
-- Dr. Vinod Pangrasous, Dr. Salim Hagag, Dr. Nejib, and Dr. Khalid Ali for their assistance and advice during project development.
-- Dr Selim Perrilla and Dr Yousseff for their assistance and advice during project development.
+- Dr. [Ommitted], Dr. [Ommitted], Dr. [Ommitted], and Dr. [Ommitted] for their assistance and advice during project development.
+- Dr [Ommitted] and Dr [Ommitted] for their assistance and advice during project development.
 
 ## Contact Information
 
@@ -32,3 +32,5 @@ For any additional questions or comments, please contact us at:
 ## License
 
 See LICENSE for more details.
+
+[Ommitted] infomation due to privacy concerns.
