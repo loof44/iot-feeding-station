@@ -1,5 +1,5 @@
-#ifndef TIME_H
-#define TIME_H
+#ifndef TIME2_H
+#define TIME2_H
 #include <ESP8266WiFi.h>
 #include <NTPClient.h>
 #include <WiFiUdp.h>
@@ -23,7 +23,7 @@ String weekDays[7]={"Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Fri
 String months[12]={"January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"};
 
 
-void timeSetup(bool &state) {
+void timeSetup2(bool &state) {
   // Initialize Serial Monitor
   // Serial.begin(115200);
   
@@ -103,11 +103,11 @@ void timeSetup(bool &state) {
 // }
 
 
-int getTime() {
+void getTime2(int &hour, int &minute, int &second, int &day, int &month, int &year) {
   const char* ssid = "loof";
   const char* password = "123456789";
 
-  connectToNetwork(ssid, password);
+  // connectToNetwork(ssid, password, state);
     
   // Your code to get time
   timeClient.update();
@@ -170,7 +170,5 @@ int getTime() {
   
 
   delay(2000);
-
-  return currentHour;
 }
 #endif

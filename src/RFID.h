@@ -14,9 +14,10 @@ MFRC522::MIFARE_Key key;
 
 
 String tag;
-void setupRFID() {
+void setupRFID(bool &state) {
   SPI.begin();
   rfid.PCD_Init();
+  state = true;
 }
 
 String RFID() {

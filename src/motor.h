@@ -5,8 +5,9 @@
 
 Servo myservo;  // create servo object to control a servo
 
-void setupMotor(){
+void setupMotor(bool &state){
   myservo.attach(D2);  // attaches the servo on pin D2 to the servo object
+    state = true;
 }
 
 void motor(int compartment){
