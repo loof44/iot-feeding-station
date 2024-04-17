@@ -22,6 +22,7 @@
 #include <network.h>
 #include <BlynkSimpleEsp8266.h>
 #include <motor.h>
+#include <time2.h>
 
 char ssid[] = "SSID";
 char pass[] = "PASSWORD";
@@ -73,11 +74,17 @@ components componentStatus;
 void setup(){
     Serial.begin(115200);
     Blynk.begin(BLYNK_AUTH_TOKEN, ssid, pass);
+    delay(50);
     motionSetup(componentStatus.motionSensor);
+    delay(50);
     setupRFID(componentStatus.RFID);
+    delay(50);
     scaleSetup(componentStatus.scale);
+    delay(50);
     setupMotor(componentStatus.motor);
+    delay(50);
     connectToNetwork(ssid, pass, componentStatus.network);
+    delay(50);
     timeSetup(componentStatus.time);
     for (int i = 0; i < 6; i++) {
       Serial.println(componentStatus.motionSensor);
@@ -132,12 +139,7 @@ void loop()
             Serial.println("camel ID:");
             Serial.println(camelUID);
             isCamelIDDetected = true;
-
-        }else{
-            isCamelIDDetected = false;
-            Serial.println("No camel ID detected");
-        }
-        getTime(currentTime.hour, currentTime.minute, currentTime.second, currentTime.day, currentTime.month, currentTime.year);
+            getTime2(currentTime.hour, currentTime.minute, currentTime.second, currentTime.day, currentTime.month, currentTime.year);
         if (currentTime.hour != 0 && currentTime.minute != 0 && currentTime.second != 0 && currentTime.day != 0 && currentTime.month != 0 && currentTime.year != 0){
             isTimeDetected = true;
             if (currentTime.hour < 12){
@@ -170,6 +172,9 @@ void loop()
             isTimeDetected = false;
             Serial.println("No time detected");
         }
+        }else{
+            isCamelIDDetected = false;
+            Serial.println("No camel ID detected");
     }
     //check if all states are true
     if (isDispenserReady && isMotionDetected && isCamelIDDetected && isTimeDetected && isFoodDropped && isCamelDoneEating){
@@ -198,7 +203,9 @@ void loop()
     //make sure all flags are true then send data to blynk
     //create function to send data to blynk
     //send alerts if any error occured mid session and have exception handling.
-    
+
+
+  
 
 
 
@@ -231,3 +238,4 @@ bool camelFinishedEating() {
     //write the struct to send data.
   }
 }
+
