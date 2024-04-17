@@ -198,8 +198,8 @@ void motor(int compartment){
       digitalWrite(D2, HIGH);
       myservo.write(180);
       delay(1000); 
-      myservo.write(0);  // Rotate servo to stop position
-      delay(100);
+      //myservo.write(0);  // Rotate servo to stop position
+      //delay(100);
     }
   }   
 }
@@ -220,8 +220,8 @@ float readScale() {
 void send_data(struct session_info session){
   int eID = session.entryId;
   String camelID = session.camelID;
-  float Consumotion = session.Consumption;
-  int foodDropped = session.foodDropped;
+  float Consumption = session.Consumption;
+  float foodDropped = session.foodDropped;
   int consumptionDuration = session.consumptionDuration;
 
   
@@ -232,7 +232,7 @@ void send_data(struct session_info session){
   doc["deviceId"] = "NodeMCU";
   doc["Entry"] = eID;
   doc["camel ID "] = camelID;
-  doc["Consumed Amount"] = Consumotion;
+  doc["Consumed Amount"] = Consumption;
   doc["Food Dropped"] = foodDropped;
   doc["Consumption Duration"] = consumptionDuration;
 
@@ -256,6 +256,7 @@ void send_data(struct session_info session){
 struct session_info {
   String camelID;
   int entryId;
+  float Consumption;
   float foodDropped;
   int consumptionDuration;
   std::time_t dateTime; // This field will store the date and time
@@ -299,7 +300,7 @@ void loop() {
     unsigned long startMillis = millis();
 
     motor(rotations);
-    current_session.consumptionDuration = readScale();
+    current_session.Consumption = readScale();
 
     // End recording consumption duration
     unsigned long endMillis = millis();

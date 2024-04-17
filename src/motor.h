@@ -13,7 +13,7 @@ void motor(int compartment){
   if (compartment != 0){
     for (int i = 0; i < compartment; i++){
       digitalWrite(D2, HIGH);
-      myservo.write(compartment*36); //each compartment is a 36 degree rotation (i think?)
+      myservo.write(180); 
       delay(1000); 
     }
   }   
