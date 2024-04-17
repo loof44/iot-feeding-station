@@ -50,11 +50,17 @@ void setup() {
   // put your setup code here, to run once:
   Serial.begin(115200);
   Blynk.begin(BLYNK_AUTH_TOKEN, ssid, pass);
+  delay(50);
   motionSetup();
+  delay(50);
   setupRFID();
+  delay(50);
   scaleSetup();
+  delay(50);
   connectToNetwork(ssid, pass);
+  delay(50);
   timeSetup();
+  delay(50);
 }
 
 void loop() {
