@@ -149,10 +149,16 @@ void loop()
 
 
             }
-            else if (currentTime.hour >= 12){
+            else if (currentTime.hour >= 12 && currentTime.hour < 15){
                 motor(2);
                 isFoodDropped = true;
-                Serial.println("Evening: Dropping 5KG of food for camel with ID: " + camelUID);
+                Serial.println("Afternoon: Dropping 5KG of Alfalfa for camel with ID: " + camelUID);
+                
+            }
+            else {
+                motor(1);
+                isFoodDropped = true;
+                Serial.println("Evening: Dropping 2.5KG of Barley for camel with ID: " + camelUID);
             }
             while (camelFinishedEating() == false) {
                 isCamelDoneEating = false;
