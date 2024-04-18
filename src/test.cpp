@@ -74,17 +74,11 @@ components componentStatus;
 void setup(){
     Serial.begin(115200);
     Blynk.begin(BLYNK_AUTH_TOKEN, ssid, pass);
-    delay(50);
     motionSetup(componentStatus.motionSensor);
-    delay(50);
     setupRFID(componentStatus.RFID);
-    delay(50);
     scaleSetup(componentStatus.scale);
-    delay(50);
     setupMotor(componentStatus.motor);
-    delay(50);
     connectToNetwork(ssid, pass, componentStatus.network);
-    delay(50);
     timeSetup(componentStatus.time);
     for (int i = 0; i < 6; i++) {
       Serial.println(componentStatus.motionSensor);
@@ -93,7 +87,6 @@ void setup(){
       Serial.println(componentStatus.network);
       Serial.println(componentStatus.time);
       Serial.println(componentStatus.motor);
-      delay(50);
     }
     //check if all components are ready
     if (componentStatus.motionSensor && componentStatus.RFID && componentStatus.scale && componentStatus.network && componentStatus.time && componentStatus.motor) {
@@ -136,80 +129,87 @@ void loop()
         }
         if (isMotionDetected){
             camelUID = RFID();
+            if (camelUID != "" || camelUID != NULL)
+            {
             Serial.println("camel ID:");
             Serial.println(camelUID);
             isCamelIDDetected = true;
             getTime2(currentTime.hour, currentTime.minute, currentTime.second, currentTime.day, currentTime.month, currentTime.year);
-        if (currentTime.hour != 0 && currentTime.minute != 0 && currentTime.second != 0 && currentTime.day != 0 && currentTime.month != 0 && currentTime.year != 0){
-            isTimeDetected = true;
-            if (currentTime.hour < 12){
-                motor(1);
-                isFoodDropped = true;
-                Serial.println("Morning: Dropping 2.5KG of food for camel with ID: " + camelUID);
+            if (currentTime.hour != 0 && currentTime.minute != 0 && currentTime.second != 0 && currentTime.day != 0 && currentTime.month != 0 && currentTime.year != 0){
+                isTimeDetected = true;
+                if (currentTime.hour < 12){
+                    motor(1);
+                    isFoodDropped = true;
+                    Serial.println("Morning: Dropping 2.5KG of food for camel with ID: " + camelUID);
 
 
+                }
+                else if (currentTime.hour >= 12){
+                    motor(2);
+                    isFoodDropped = true;
+                    Serial.println("Evening: Dropping 5KG of food for camel with ID: " + camelUID);
+                }
+                while (camelFinishedEating() == false) {
+                    isCamelDoneEating = false;
+                    weightOfConsumedFood = readScale();
+                    Serial.println("Camel is still eating");
+                    Serial.println("Current weight: ");
+                    Serial.println(weightOfConsumedFood);
+                    consumptionTime = millis()/1000;
+                }
+                isCamelDoneEating = true;
+                   if (isCamelDoneEating) {
+                        Serial.println("Camel has finished eating");
+                        weightOfConsumedFood = readScale();
+                        Serial.println("Current weight: ");
+                        Serial.println(weightOfConsumedFood);
+                    }
+              }
+              else
+              {
+                    isTimeDetected = false;
+                    Serial.println("No time detected");
+              }
             }
-            else if (currentTime.hour >= 12){
-                motor(2);
-                isFoodDropped = true;
-                Serial.println("Evening: Dropping 5KG of food for camel with ID: " + camelUID);
-            }
-            while (camelFinishedEating() == false) {
-                isCamelDoneEating = false;
-                weightOfConsumedFood = readScale();
-                Serial.println("Camel is still eating");
-                Serial.println("Current weight: ");
-                Serial.println(weightOfConsumedFood);
-                consumptionTime = millis()/1000;
-            }
-            isCamelDoneEating = true;
-            if (isCamelDoneEating){
-                Serial.println("Camel has finished eating");
-                Serial.println("Current weight: ");
-
-            }
-        }else{
-            isTimeDetected = false;
-            Serial.println("No time detected");
-        }
-        }else{
-            isCamelIDDetected = false;
-            Serial.println("No camel ID detected");
+    else
+    {
+      isCamelIDDetected = false;
+      Serial.println("No camel ID detected");
     }
-    //check if all states are true
+ //check if all states are true
     if (isDispenserReady && isMotionDetected && isCamelIDDetected && isTimeDetected && isFoodDropped && isCamelDoneEating){
-        Serial.println("All states are true... Session Done");
-        total_chambers--;
-        //reset all states
-        isMotionDetected = false;
-        isCamelIDDetected = false;
-        isTimeDetected = false;
-        isFoodDropped = false;
-        isCamelDoneEating = false;
+    Serial.println("All states are true... Session Done");
+    total_chambers--;
+    //reset all states
+    isMotionDetected = false;
+    isCamelIDDetected = false;
+    isTimeDetected = false;
+    isFoodDropped = false;
+    isCamelDoneEating = false;
     }
-    else{
-        Serial.println("Session not done or error occured");
+    else
+    {
+      Serial.println("Session not done or error occured");
     }
 
     if (total_chambers == 0){
-        isDispenserReady = false;
-        Serial.println("All chambers are empty");
+    isDispenserReady = false;
+    Serial.println("All chambers are empty");
     }
     else{
-        Serial.println("Chambers remaining: ");
-        Serial.println(total_chambers);
+      Serial.println("Chambers remaining: ");
+      Serial.println(total_chambers); 
     }
+    
 
     //make sure all flags are true then send data to blynk
     //create function to send data to blynk
     //send alerts if any error occured mid session and have exception handling.
-
-
-  
-
-
-
+    }
+  }
 }
+
+
 
 bool camelFinishedEating() {
   float weightChangeThreshold = 0.1; // change in weight threshold
@@ -233,9 +233,26 @@ bool camelFinishedEating() {
   if (motionValue == LOW && weightChange < weightChangeThreshold) {
     
     return true;  // Camel has finished eating
-  } else {
+  }
+  else
+  {
     return false;  // Camel is still eating
     //write the struct to send data.
   }
 }
 
+//Complete the code in which assiging values a virtual pin in blynk to update of the compartments used.
+//if 0 then then compartments empty then send notification to application to change the status of the compartment to empty.
+//notify people to refill the compartments.
+BLYNK_WRITE(V1)
+{
+  int pinValue = param.asInt();
+  if (pinValue == 0)
+  {
+    Serial.println("Button pressed");
+  }
+}
+
+void send_data(){
+  Blynk.virtualWrite(V1, 1);
+}
