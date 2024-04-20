@@ -30,16 +30,13 @@ char pass[] = "PASSWORD";
 BlynkTimer timer;
 
 //Define states
-bool isNetworkConnected = false;
-bool isConnectedToBlynk = false;
+
+
 bool isTimeDetected = false;
 bool isDispenserReady = false;
 bool isMotionDetected = false;
 bool isCamelIDDetected = false;
 bool isFoodDropped = false;
-bool isWeightDetected = false;
-bool isWeightChanging = false;
-bool isCamelIDChanging = false;
 bool isCamelDoneEating = false;
 
 //Define datastreams
@@ -163,6 +160,13 @@ void loop()
                         weightOfConsumedFood = readScale();
                         Serial.println("Current weight: ");
                         Serial.println(weightOfConsumedFood);
+                        //send data to blynk
+                        BlynkData data;
+                        data.camelUID = camelUID;
+                        data.time = String(currentTime.hour) + ":" + String(currentTime.minute) + ":" + String(currentTime.second);
+                        data.weightOfConsumedFood = weightOfConsumedFood;
+                        data.consumptionTime = millis()/1000 - startTime;
+                        sendToBlynk(data);
                     }
               }
               else
@@ -253,6 +257,16 @@ BLYNK_WRITE(V1)
   }
 }
 
-void send_data(){
-  Blynk.virtualWrite(V1, 1);
-}
+struct BlynkData {
+  String camelUID;
+  String time;
+  float weightOfConsumedFood;
+  int consumptionTime;
+};
+
+void sendToBlynk(BlynkData data) {
+  Blynk.virtualWrite(V1, data.camelUID);
+  Blynk.virtualWrite(V2, data.time);
+  Blynk.virtualWrite(V3, data.weightOfConsumedFood);
+  Blynk.virtualWrite(V4, data.consumptionTime);
+};
