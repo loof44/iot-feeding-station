@@ -130,6 +130,8 @@ void loop()
     int total_chambers = 6;//configure the number of chambers
     Blynk.run();
     timer.run();
+    //check if chamber has been refilled
+    //BLYNK_WRITE(V1);
     if (isDispenserReady){
         while(!isMotionDetected){
             motionSensor(isMotionDetected);
@@ -267,9 +269,9 @@ bool camelFinishedEating() {
 BLYNK_WRITE(V1)
 {
   int pinValue = param.asInt();
-  if (pinValue == 0)
+  if (pinValue == 6)
   {
-    Serial.println("Button pressed");
+    isDispenserReady = true;
   }
 }
 
