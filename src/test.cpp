@@ -13,7 +13,7 @@
 /* Comment this out to disable prints and save space */
 #define BLYNK_PRINT Serial
 
-
+#include <Blynk.h>
 #include <Arduino.h>
 #include <time.h>
 #include <RFID.h>
@@ -167,12 +167,15 @@ void loop()
                         data.weightOfConsumedFood = weightOfConsumedFood;
                         data.consumptionTime = millis()/1000 - startTime;
                         sendToBlynk(data);
+                        Serial.println("Data sent to Blynk");
+                        Blynk.logEvent("Camel with ID: " + camelUID + " has finished eating");
                     }
               }
               else
               {
                     isTimeDetected = false;
                     Serial.println("No time detected");
+                    Blynk.logEvent("No time detected");
               }
             }
     else
@@ -199,6 +202,8 @@ void loop()
     if (total_chambers == 0){
     isDispenserReady = false;
     Serial.println("All chambers are empty");
+    //send notification to refill the compartments
+    Blynk.logEvent("All compartments are empty. Please refill the compartments");
     }
     else{
       Serial.println("Chambers remaining: ");
