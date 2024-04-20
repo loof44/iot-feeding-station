@@ -13,6 +13,8 @@
 /* Comment this out to disable prints and save space */
 #define BLYNK_PRINT Serial
 
+#include <ESP8266WiFi.h>
+#include <ArduinoJson.h>
 #include <Blynk.h>
 #include <Arduino.h>
 #include <time.h>
@@ -23,9 +25,16 @@
 #include <BlynkSimpleEsp8266.h>
 #include <motor.h>
 #include <time2.h>
+#include <PubSubClient.h>
+
 
 char ssid[] = "SSID";
 char pass[] = "PASSWORD";
+const char* mqtt_server = "mqtt.example.com";
+
+WiFiClient espClient;
+PubSubClient client(espClient);
+
 
 BlynkTimer timer;
 
@@ -70,6 +79,7 @@ components componentStatus;
 
 void setup(){
     Serial.begin(115200);
+    client.setServer(mqtt_server, 1883);
     Blynk.begin(BLYNK_AUTH_TOKEN, ssid, pass);
     motionSetup(componentStatus.motionSensor);
     setupRFID(componentStatus.RFID);
@@ -169,6 +179,7 @@ void loop()
                         sendToBlynk(data);
                         Serial.println("Data sent to Blynk");
                         Blynk.logEvent("Camel with ID: " + camelUID + " has finished eating");
+                        sendData(data);
                     }
               }
               else
@@ -268,10 +279,27 @@ struct BlynkData {
   float weightOfConsumedFood;
   int consumptionTime;
 };
-
+//replace the virtual pins with the actual pins
 void sendToBlynk(BlynkData data) {
   Blynk.virtualWrite(V1, data.camelUID);
   Blynk.virtualWrite(V2, data.time);
   Blynk.virtualWrite(V3, data.weightOfConsumedFood);
   Blynk.virtualWrite(V4, data.consumptionTime);
 };
+
+//server
+
+
+void sendData(BlynkData data) {
+  DynamicJsonDocument doc(1024);
+
+  doc["camelUID"] = data.camelUID;
+  doc["time"] = data.time;
+  doc["weightOfConsumedFood"] = data.weightOfConsumedFood;
+  doc["consumptionTime"] = data.consumptionTime;
+
+  char jsonBuffer[512];
+  serializeJson(doc, jsonBuffer);  // Convert JSON document to string
+
+  client.publish("chambers/data", jsonBuffer);
+}
