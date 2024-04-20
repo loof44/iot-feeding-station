@@ -13,117 +13,226 @@
 /* Comment this out to disable prints and save space */
 #define BLYNK_PRINT Serial
 
-#include <BlynkSimpleEsp8266.h>
-
-#include <motion.h>
-#include <RFID.h>
-#include <scale.h>
-#include <time.h>
-#include <Arduino.h>
-#include <network.h>
-#include <time.h>
-#include <motor.h>
-
-#include <Arduino.h>
+#include <ESP8266WiFi.h>
 #include <ArduinoJson.h>
+#include <Blynk.h>
+#include <Arduino.h>
+#include <time.h>
+#include <RFID.h>
+#include <motion.h>
+#include <scale.h>
+#include <network.h>
+#include <BlynkSimpleEsp8266.h>
+#include <motor.h>
+#include <time2.h>
+#include <PubSubClient.h>
 
-// Your WiFi credentials.
-// Set password to "" for open networks.
-char ssid[] = "Khalifa";
-char pass[] = "ENTER_PASSWORD_HERE";
+
+char ssid[] = "SSID";
+char pass[] = "PASSWORD";
+const char* mqtt_server = "mqtt.example.com";
+
+WiFiClient espClient;
+PubSubClient client(espClient);
+
 
 BlynkTimer timer;
 
+//Define states
+
+
+bool isTimeDetected = false;
+bool isDispenserReady = false;
+bool isMotionDetected = false;
+bool isCamelIDDetected = false;
+bool isFoodDropped = false;
+bool isCamelDoneEating = false;
+
 //Define datastreams
 String camelUID;
+String time;
+String Date;
+String Time;
+float weightOfConsumedFood;
+int consumptionTime;
+int startTime;
 
-struct session_info {
-  int entryId;
-  String camelID;
-  float Consumption;
-  int foodDropped;
-  int consumptionDuration;
-  
+struct components {
+  bool motionSensor;
+  bool RFID;
+  bool scale;
+  bool network;
+  bool time;
+  bool motor;
 };
 
-void setup() {
-  // put your setup code here, to run once:
-  Serial.begin(115200);
-  Blynk.begin(BLYNK_AUTH_TOKEN, ssid, pass);
-  delay(50);
-  motionSetup();
-  delay(50);
-  setupRFID();
-  delay(50);
-  scaleSetup();
-  delay(50);
-  connectToNetwork(ssid, pass);
-  delay(50);
-  timeSetup();
-  delay(50);
-}
+struct time_log {
+  int hour;
+  int minute;
+  int second;
+  int day;
+  int month;
+  int year;
+};
+time_log currentTime;
+components componentStatus;
 
-void loop() {
-  session_info session;
-  bool motionDetected = false;
-  // put your main code here, to run repeatedly:
-  Blynk.run();
-  // Call the timer.run() function to run the timer
-  timer.run();
-  // You can inject your own code or combine it with other sketches.
-  // Check other examples on how to communicate with Blynk. Remember
-  // to avoid delay() function!
-  while (motionDetected == false) {
-    motionSensor(motionDetected);
-  
-  }
-  if (motionDetected == true) {
+void setup(){
+    Serial.begin(115200);
+    client.setServer(mqtt_server, 1883);
+    Blynk.begin(BLYNK_AUTH_TOKEN, ssid, pass);
+    motionSetup(componentStatus.motionSensor);
+    setupRFID(componentStatus.RFID);
+    scaleSetup(componentStatus.scale);
+    setupMotor(componentStatus.motor);
+    connectToNetwork(ssid, pass, componentStatus.network);
+    timeSetup(componentStatus.time);
+    for (int i = 0; i < 6; i++) {
+      Serial.println(componentStatus.motionSensor);
+      Serial.println(componentStatus.RFID);
+      Serial.println(componentStatus.scale);
+      Serial.println(componentStatus.network);
+      Serial.println(componentStatus.time);
+      Serial.println(componentStatus.motor);
+    }
+    //check if all components are ready
+    if (componentStatus.motionSensor && componentStatus.RFID && componentStatus.scale && componentStatus.network && componentStatus.time && componentStatus.motor) {
+      isDispenserReady = true;
+    }
+    else {
+        //print the component that is not ready
+        if (!componentStatus.motionSensor) {
+          Serial.println("Motion sensor not ready");
+        }
+        if (!componentStatus.RFID) {
+          Serial.println("RFID not ready");
+        }
+        if (!componentStatus.scale) {
+          Serial.println("Scale not ready");
+        }
+        if (!componentStatus.network) {
+          Serial.println("Network not ready");
+        }
+        if (!componentStatus.time) {
+          Serial.println("Time not ready");
+        }
+        if (!componentStatus.motor) {
+          Serial.println("Motor not ready");
+        }
+
+      isDispenserReady = false;
+    }
     
-    session.camelID = camelUID;
-    Serial.println("camel ID:");
-    Serial.println(camelUID);
-  }
-  int time = getTime();
-  int startTime;
-  float weight;
-  int consumptionTime;
-  dropFood(time, camelUID);
-  weight = readScale();
-  while (camelFinishedEating() == false) {
-    weight = readScale();
-    Serial.println("Camel is still eating");
-    Serial.println("Current weight: ");
-    Serial.println(weight);
-    consumptionTime = millis()/1000;
-  }
-  if (camelFinishedEating() == true) {
-    Serial.println("Camel has finished eating");
-    Serial.println("Current weight: ");
-  }
-
-  //put the below in a function and send upload data once the entire struct has been filled. beloow there is a function.
-  session.camelID = camelUID;
-  session.Consumption = weight;
-  session.consumptionDuration = consumptionTime;
-  session.foodDropped = 0; //food dropped
-  //session.datetime = getTime();
 }
 
-// Determine how much food to drop
-void dropFood(int time, String ID) {
-  if (00 < time < 12){
-    motor(1);
-    Serial.println("Morning: Dropping 2.5KG of food for camel with ID: " + ID);
-  }
-  else if (12 < time < 15){
-    motor(2);
-    Serial.println("Afternoon: Dropping 5KG of food for camel with ID: " + ID);
-  }
-  else{
-    motor(1);
-    Serial.println("Evening: Dropping 2.5KG of barley for camel with ID: " + ID);
+void loop()
+{
+    int total_chambers = 6;//configure the number of chambers
+    Blynk.run();
+    timer.run();
+    //check if chamber has been refilled
+    //BLYNK_WRITE(V1);
+    if (isDispenserReady){
+        while(!isMotionDetected){
+            motionSensor(isMotionDetected);
+        }
+        if (isMotionDetected){
+            camelUID = RFID();
+            if (camelUID != "" || camelUID != NULL)
+            {
+            Serial.println("camel ID:");
+            Serial.println(camelUID);
+            isCamelIDDetected = true;
+            getTime2(currentTime.hour, currentTime.minute, currentTime.second, currentTime.day, currentTime.month, currentTime.year);
+            if (currentTime.hour != 0 && currentTime.minute != 0 && currentTime.second != 0 && currentTime.day != 0 && currentTime.month != 0 && currentTime.year != 0){
+                isTimeDetected = true;
+                if (currentTime.hour < 12){
+                    motor(1);
+                    isFoodDropped = true;
+                    Serial.println("Morning: Dropping 2.5KG of food for camel with ID: " + camelUID);
+
+
+                }
+                else if (currentTime.hour >= 12){
+                    motor(2);
+                    isFoodDropped = true;
+                    Serial.println("Evening: Dropping 5KG of food for camel with ID: " + camelUID);
+                }
+                while (camelFinishedEating() == false) {
+                    isCamelDoneEating = false;
+                    weightOfConsumedFood = readScale();
+                    Serial.println("Camel is still eating");
+                    Serial.println("Current weight: ");
+                    Serial.println(weightOfConsumedFood);
+                    consumptionTime = millis()/1000;
+                }
+                isCamelDoneEating = true;
+                   if (isCamelDoneEating) {
+                        Serial.println("Camel has finished eating");
+                        weightOfConsumedFood = readScale();
+                        Serial.println("Current weight: ");
+                        Serial.println(weightOfConsumedFood);
+                        //send data to blynk
+                        BlynkData data;
+                        data.camelUID = camelUID;
+                        data.time = String(currentTime.hour) + ":" + String(currentTime.minute) + ":" + String(currentTime.second);
+                        data.weightOfConsumedFood = weightOfConsumedFood;
+                        data.consumptionTime = millis()/1000 - startTime;
+                        sendToBlynk(data);
+                        Serial.println("Data sent to Blynk");
+                        Blynk.logEvent("Camel with ID: " + camelUID + " has finished eating");
+                        sendData(data);
+                    }
+              }
+              else
+              {
+                    isTimeDetected = false;
+                    Serial.println("No time detected");
+                    Blynk.logEvent("No time detected");
+              }
+            }
+    else
+    {
+      isCamelIDDetected = false;
+      Serial.println("No camel ID detected");
+    }
+ //check if all states are true
+    if (isDispenserReady && isMotionDetected && isCamelIDDetected && isTimeDetected && isFoodDropped && isCamelDoneEating){
+    Serial.println("All states are true... Session Done");
+    total_chambers--;
+    //reset all states
+    isMotionDetected = false;
+    isCamelIDDetected = false;
+    isTimeDetected = false;
+    isFoodDropped = false;
+    isCamelDoneEating = false;
+    }
+    else
+    {
+      Serial.println("Session not done or error occured");
+    }
+
+    if (total_chambers == 0){
+    isDispenserReady = false;
+    Serial.println("All chambers are empty");
+    //send notification to refill the compartments
+    Blynk.logEvent("All compartments are empty. Please refill the compartments");
+    }
+    else{
+      Serial.println("Chambers remaining: ");
+      Serial.println(total_chambers); 
+    }
+    
+
+    //make sure all flags are true then send data to blynk
+    //create function to send data to blynk
+    //send alerts if any error occured mid session and have exception handling.
+    }
   }
 }
+
+
+
 bool camelFinishedEating() {
   float weightChangeThreshold = 0.1; // change in weight threshold
   int time_in_seconds = millis()/1000;
@@ -146,40 +255,53 @@ bool camelFinishedEating() {
   if (motionValue == LOW && weightChange < weightChangeThreshold) {
     
     return true;  // Camel has finished eating
-  } else {
+  }
+  else
+  {
     return false;  // Camel is still eating
     //write the struct to send data.
   }
 }
 
-//fix the below function to send the struct to the server
-void send_data(struct session_info session){
-  
-  int eID = session.entryId;
-  String camelID = session.camelID;
-  float Consumotion = session.Consumption;
-  int foodDropped = session.foodDropped;
-  int consumptionDuration = session.consumptionDuration;
-
-  
-   
-  DynamicJsonDocument doc(1024);
-  
-
-  doc["deviceId"] = "NodeMCU";
-  doc["Entry"] = eID;
-  doc["camel ID "] = camelID;
-  doc["Consumed Amount"] = Consumotion;
-  doc["Food Dropped"] = foodDropped;
-  doc["Consumption Duration"] = consumptionDuration;
-
-  char mqtt_message[128];
-  serializeJson(doc, mqtt_message);
-
-  //publishMessage("esp8266_data", mqtt_message, true);
-
-  delay(5000);
-
+//Complete the code in which assiging values a virtual pin in blynk to update of the compartments used.
+//if 0 then then compartments empty then send notification to application to change the status of the compartment to empty.
+//notify people to refill the compartments.
+BLYNK_WRITE(V1)
+{
+  int pinValue = param.asInt();
+  if (pinValue == 6)
+  {
+    isDispenserReady = true;
+  }
 }
 
-// remaining is sending data to blynk server
+struct BlynkData {
+  String camelUID;
+  String time;
+  float weightOfConsumedFood;
+  int consumptionTime;
+};
+//replace the virtual pins with the actual pins
+void sendToBlynk(BlynkData data) {
+  Blynk.virtualWrite(V1, data.camelUID);
+  Blynk.virtualWrite(V2, data.time);
+  Blynk.virtualWrite(V3, data.weightOfConsumedFood);
+  Blynk.virtualWrite(V4, data.consumptionTime);
+};
+
+//server
+
+
+void sendData(BlynkData data) {
+  DynamicJsonDocument doc(1024);
+
+  doc["camelUID"] = data.camelUID;
+  doc["time"] = data.time;
+  doc["weightOfConsumedFood"] = data.weightOfConsumedFood;
+  doc["consumptionTime"] = data.consumptionTime;
+
+  char jsonBuffer[512];
+  serializeJson(doc, jsonBuffer);  // Convert JSON document to string
+
+  client.publish("chambers/data", jsonBuffer);
+}
