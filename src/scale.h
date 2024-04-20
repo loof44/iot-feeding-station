@@ -32,7 +32,7 @@ void scaleSetup(bool &state) {
   Serial.println(scale.get_units(5), 1);  // print the average of 5 readings from the ADC minus tare weight (not set) divided
             // by the SCALE parameter (not set yet)
             
-  scale.set_scale(-478.507);
+  scale.set_scale(229.575758);
   //scale.set_scale(-471.497);                      // this value is obtained by calibrating the scale with known weights; see the README for details
   scale.tare();               // reset the scale to 0
 
