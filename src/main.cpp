@@ -127,6 +127,8 @@ void setup(){
 
 void loop()
 {
+    String foodType;
+    float foodDropped;
     int total_chambers = 6;//configure the number of chambers
     Blynk.run();
     timer.run();
@@ -150,13 +152,28 @@ void loop()
                     motor(1);
                     isFoodDropped = true;
                     Serial.println("Morning: Dropping 2.5KG of food for camel with ID: " + camelUID);
+                    foodType = "alfalafa";
+                    foodDropped = 2.5;
 
 
                 }
-                else if (currentTime.hour >= 12){
+                else if (15 >currentTime.hour >= 12){
                     motor(2);
                     isFoodDropped = true;
                     Serial.println("Evening: Dropping 5KG of food for camel with ID: " + camelUID);
+                }
+                else if (currentTime.hour >= 15){
+                    motor(1);
+                    isFoodDropped = true;
+                    Serial.println("Evening: Dropping 2.5KG of barley for camel with ID: " + camelUID);
+                    foodType = "barley";
+                    foodDropped = 2.5;
+                }
+                else
+                {
+                    isFoodDropped = false;
+                    Serial.println("No food dropped");
+                    Blynk.logEvent("No food dropped");
                 }
                 while (camelFinishedEating() == false) {
                     isCamelDoneEating = false;
@@ -178,6 +195,8 @@ void loop()
                         data.time = String(currentTime.hour) + ":" + String(currentTime.minute) + ":" + String(currentTime.second);
                         data.weightOfConsumedFood = weightOfConsumedFood;
                         data.consumptionTime = millis()/1000 - startTime;
+                        data.foodType = foodType;
+                        data.amountDropped = foodDropped;
                         sendToBlynk(data);
                         Serial.println("Data sent to Blynk");
                         Blynk.logEvent("Camel with ID: " + camelUID + " has finished eating");
@@ -278,7 +297,9 @@ BLYNK_WRITE(V1)
 struct BlynkData {
   String camelUID;
   String time;
+  String foodType;
   float weightOfConsumedFood;
+  float amountDropped;
   int consumptionTime;
 };
 //replace the virtual pins with the actual pins
@@ -287,6 +308,8 @@ void sendToBlynk(BlynkData data) {
   Blynk.virtualWrite(V2, data.time);
   Blynk.virtualWrite(V3, data.weightOfConsumedFood);
   Blynk.virtualWrite(V4, data.consumptionTime);
+  Blynk.virtualWrite(V5, data.foodType);
+  Blynk.virtualWrite(V6, data.amountDropped);
 };
 
 //server
@@ -299,9 +322,13 @@ void sendData(BlynkData data) {
   doc["time"] = data.time;
   doc["weightOfConsumedFood"] = data.weightOfConsumedFood;
   doc["consumptionTime"] = data.consumptionTime;
+  doc["foodType"] = data.foodType;
+  doc["amountDropped"] = data.amountDropped;
 
   char jsonBuffer[512];
   serializeJson(doc, jsonBuffer);  // Convert JSON document to string
 
-  client.publish("chambers/data", jsonBuffer);
+  client.publish("data", jsonBuffer);
 }
+
+// Dynamic Pin Allocation
