@@ -12,10 +12,6 @@ const int LOADCELL_SCK_PIN = 13;
 HX711 scale;
 
 void scaleSetup(bool &state) {
-  Serial.begin(115200);
-  Serial.println("HX711 Demo");
-  Serial.println("Initializing the scale");
-
   scale.begin(LOADCELL_DOUT_PIN, LOADCELL_SCK_PIN);
 
   Serial.println("Before setting up the scale:");
