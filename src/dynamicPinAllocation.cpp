@@ -14,22 +14,32 @@ enum Sensor {
 Sensor currentSensor = NONE;
 unsigned long lastCheckTime = 0;
 
-bool isMotionSensorActive() {
-    // ... Implement this according to your hardware.
+bool isMotionSensorActive(bool &state) {
+    if (state == true) {
+        return true;
+    }else {
+        return false;
+    }
 }
 
-bool isRFIDSensorActive() {
-    // ... Implement this according to your hardware.
+bool isRFIDSensorActive(bool &state) {
+    if (state == true) {
+        return true;
+    }else {
+        return false;
+    }
 }
 
 void updateCurrentSensor() {
+    bool state1 = false;
+    bool state2 = false;
     unsigned long currentTime = millis();
     
     // If enough time has passed since we last checked...
     if (currentTime - lastCheckTime >= SENSOR_CHECK_INTERVAL) {
-        if (isMotionSensorActive()) { // If motion sensor is active...
+        if (isMotionSensorActive(state1)) { // If motion sensor is active...
             currentSensor = MOTION;   // Mark the motion sensor as the current one.
-        } else if (isRFIDSensorActive()) { // If RFID sensor is active...
+        } else if (isRFIDSensorActive(state2)) { // If RFID sensor is active...
             currentSensor = RFID;     // Mark the RFID sensor as the current one.
         } else {
             currentSensor = NONE;     // No active sensor.
