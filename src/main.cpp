@@ -30,10 +30,50 @@
 
 char ssid[] = "SSID";
 char pass[] = "PASSWORD";
-const char* mqtt_server = "mqtt.example.com";
+//mqtt broaker
+const char* mqtt_server = "8008fde5131742c59e6a658482d0693a.s1.eu.hivemq.cloud";
+const char* mqtt_username = "khalifa";
+const char* mqtt_password = "Khalifa1003";
+const int mqtt_port =8883;
+
 
 WiFiClient espClient;
 PubSubClient client(espClient);
+
+unsigned long lastMsg = 0;
+#define MSG_BUFFER_SIZE (50)
+char msg[MSG_BUFFER_SIZE];
+
+/**** Method for Publishing MQTT Messages **********/
+void publishMessage(const char* topic, String payload , boolean retained){
+  if (client.publish(topic, payload.c_str(), true))
+      Serial.println("Message publised ["+String(topic)+"]: "+payload);
+}
+
+/************* Connect to MQTT Broker ***********/
+void reconnect() {
+  // Loop until we're reconnected
+  while (!client.connected()) {
+    Serial.print("Attempting MQTT connection...");
+    String clientId = "ESP8266Client-";   // Create a random client ID
+    clientId += String(random(0xffff), HEX);
+    // Attempt to connect
+    if (client.connect(clientId.c_str(), mqtt_username, mqtt_password)) {
+      Serial.println("connected");
+
+      client.subscribe("led_state");   // subscribe the topics here
+
+    } else {
+      Serial.print("failed, rc=");
+      Serial.print(client.state());
+      Serial.println(" try again in 5 seconds");   // Wait 5 seconds before retrying
+      delay(5000);
+    }
+  }
+}
+
+
+
 
 
 BlynkTimer timer;
@@ -79,7 +119,9 @@ components componentStatus;
 
 void setup(){
     Serial.begin(115200);
-    client.setServer(mqtt_server, 1883);
+    client.setServer(mqtt_server, mqtt_port);
+    
+
     Blynk.begin(BLYNK_AUTH_TOKEN, ssid, pass);
     motionSetup(componentStatus.motionSensor);
     setupRFID(componentStatus.RFID);
@@ -94,6 +136,7 @@ void setup(){
       Serial.println(componentStatus.network);
       Serial.println(componentStatus.time);
       Serial.println(componentStatus.motor);
+
     }
     //check if all components are ready
     if (componentStatus.motionSensor && componentStatus.RFID && componentStatus.scale && componentStatus.network && componentStatus.time && componentStatus.motor) {
@@ -325,10 +368,9 @@ void sendData(BlynkData data) {
   doc["foodType"] = data.foodType;
   doc["amountDropped"] = data.amountDropped;
 
-  char jsonBuffer[512];
+  char jsonBuffer[128];
   serializeJson(doc, jsonBuffer);  // Convert JSON document to string
 
   client.publish("data", jsonBuffer);
 }
 
-// Dynamic Pin Allocation
