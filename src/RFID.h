@@ -15,23 +15,40 @@ MFRC522::MIFARE_Key key;
 
 String tag;
 void setupRFID(bool &state) {
-  SPI.begin();
+  //SPI.begin();
   rfid.PCD_Init();
   state = true;
 }
 
-String RFID() {
-    tag = "";
-  if ( ! rfid.PICC_IsNewCardPresent())
+ void RFID(String &tag, bool &state) {
+  tag = ""; // Clear the 'tag' string ready for next card.
+  
+  // Check for new cards
+  if (!rfid.PICC_IsNewCardPresent()){
+    state = false;
     return;
+  }
+
+  Serial.println("RFID is reading..............");
+ 
+  // If a new card is detected, read its UID
   if (rfid.PICC_ReadCardSerial()) {
-    for (byte i = 0; i < 4; i++) {
-      tag += rfid.uid.uidByte[i];
+    for (byte i = 0; i < rfid.uid.size; i++) { // For each byte in the UID...
+      tag += String(rfid.uid.uidByte[i], HEX); // ...append it to the string 'tag'.
     }
+
+    // Print the card's UID to the serial monitor
     Serial.println(tag);
+    state = true;
+
+    // Terminate the reading process
     rfid.PICC_HaltA();
+
+    // Stop encryption on PCD
     rfid.PCD_StopCrypto1();
-    return tag;
+  } else {
+    state = false;
   }
 }
+
 #endif 

@@ -9,7 +9,7 @@
 // const char *ssid     = "loof";
 // const char *password = "123456789";
 
-
+// bool state = false;
 
 
 // Define NTP Client to get time
@@ -33,13 +33,14 @@ void timeSetup2(bool &state) {
   // GMT -1 = -3600
   // GMT 0 = 0
   timeClient.setTimeOffset(14400);
+  state = true;
 }
 
 
 
 void getTime2(int &hour, int &minute, int &second, int &day, int &month, int &year) {
-  const char* ssid = "loof";
-  const char* password = "123456789";
+  // const char* ssid = "loof";
+  // const char* password = "123456789";
 
   // connectToNetwork(ssid, password, state);
     
@@ -57,17 +58,17 @@ void getTime2(int &hour, int &minute, int &second, int &day, int &month, int &ye
   int currentHour = timeClient.getHours();
   Serial.print("Hour: ");
   Serial.println(currentHour);
-  int hour = currentHour;  
+  hour = currentHour;  
 
   int currentMinute = timeClient.getMinutes();
   Serial.print("Minutes: ");
   Serial.println(currentMinute); 
-  int minute = currentMinute;
+  minute = currentMinute;
    
   int currentSecond = timeClient.getSeconds();
   Serial.print("Seconds: ");
   Serial.println(currentSecond);  
-  int second = currentSecond;
+  second = currentSecond;
 
   String weekDay = weekDays[timeClient.getDay()];
   Serial.print("Week Day: ");
@@ -79,12 +80,12 @@ void getTime2(int &hour, int &minute, int &second, int &day, int &month, int &ye
   int monthDay = ptm->tm_mday;
   Serial.print("Month day: ");
   Serial.println(monthDay);
-  int day = monthDay;
+  day = monthDay;
 
   int currentMonth = ptm->tm_mon+1;
   Serial.print("Month: ");
   Serial.println(currentMonth);
-  int month = currentMonth;
+  month = currentMonth;
 
   String currentMonthName = months[currentMonth-1];
   Serial.print("Month name: ");
@@ -93,7 +94,7 @@ void getTime2(int &hour, int &minute, int &second, int &day, int &month, int &ye
   int currentYear = ptm->tm_year+1900;
   Serial.print("Year: ");
   Serial.println(currentYear);
-  int year = currentYear;
+  year = currentYear;
 
   //Print complete date:
   String currentDate = String(currentYear) + "-" + String(currentMonth) + "-" + String(monthDay);
