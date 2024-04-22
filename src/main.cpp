@@ -12,6 +12,11 @@
 
 /* Comment this out to disable prints and save space */
 #define BLYNK_PRINT Serial
+#define MOTION_SENSOR_PIN V0
+#define RFID_SENSOR_PIN V1
+#define SCALE_SENSOR_PIN V2
+#define MOTOR_PIN V3
+#define CHAMBERS_PIN V4
 
 #include <ESP8266WiFi.h>
 #include <ArduinoJson.h>
@@ -337,6 +342,7 @@ BLYNK_WRITE(V1)
   }
 }
 
+
 struct BlynkData {
   String camelUID;
   String time;
@@ -347,12 +353,12 @@ struct BlynkData {
 };
 //replace the virtual pins with the actual pins
 void sendToBlynk(BlynkData data) {
-  Blynk.virtualWrite(V1, data.camelUID);
-  Blynk.virtualWrite(V2, data.time);
-  Blynk.virtualWrite(V3, data.weightOfConsumedFood);
-  Blynk.virtualWrite(V4, data.consumptionTime);
-  Blynk.virtualWrite(V5, data.foodType);
-  Blynk.virtualWrite(V6, data.amountDropped);
+  Blynk.virtualWrite(RFID_SENSOR_PIN, data.camelUID);
+  Blynk.virtualWrite(V5, data.time);
+  Blynk.virtualWrite(V6, data.weightOfConsumedFood);
+  Blynk.virtualWrite(V7, data.consumptionTime);
+  Blynk.virtualWrite(V8, data.foodType);
+  Blynk.virtualWrite(V9, data.amountDropped);
 };
 
 //server
