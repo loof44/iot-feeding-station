@@ -38,7 +38,7 @@ char pass[] = "123456789";
 //mqtt broaker
 const char* mqtt_server = "8008fde5131742c59e6a658482d0693a.s1.eu.hivemq.cloud";
 const char* mqtt_username = "khxliffa";
-const char* mqtt_password = "Rypw1803";
+const char* mqtt_password = "password";
 const int mqtt_port =8883;
 
 
@@ -204,7 +204,7 @@ void setup(){
     Blynk.begin(BLYNK_AUTH_TOKEN, ssid, pass);
     delay(1000);
     Serial.println("Connecting to MQTT Broker");
-    client.setServer(mqtt_server, mqtt_port);
+    // client.setServer(mqtt_server, mqtt_port);
     delay(1000);
     Serial.println("setting up scale...");
     scaleSetup(componentStatus.scale);
@@ -248,21 +248,28 @@ void setup(){
         //print the component that is not ready
         if (!componentStatus.motionSensor) {
           Serial.println("Motion sensor not ready");
+          Blynk.logEvent("alarm", "Motion sensor not ready");
         }
         if (!componentStatus.RFID) {
           Serial.println("RFID not ready");
+          Blynk.logEvent("alarm", "RFID not ready");
+
         }
         if (!componentStatus.scale) {
           Serial.println("Scale not ready");
+          Blynk.logEvent("alarm", "Scale not ready");
         }
         if (!componentStatus.network) {
           Serial.println("Network not ready");
+          Blynk.logEvent("alarm", "Network not ready");
         }
         if (!componentStatus.time) {
           Serial.println("Time not ready");
+          Blynk.logEvent("alarm", "Time not ready");
         }
         if (!componentStatus.motor) {
           Serial.println("Motor not ready");
+          Blynk.logEvent("alarm", "Motor not ready");
         }
 
       isDispenserReady = false;
@@ -296,10 +303,12 @@ void loop()
             getTime2(currentTime.hour, currentTime.minute, currentTime.second, currentTime.day, currentTime.month, currentTime.year);
             if (currentTime.hour != 0 && currentTime.minute != 0 && currentTime.second != 0 && currentTime.day != 0 && currentTime.month != 0 && currentTime.year != 0){
                 isTimeDetected = true;
+                delay(1000);
                 if (currentTime.hour < 12){
                     motor(1);
                     isFoodDropped = true;
                     Serial.println("Morning: Dropping 2.5KG of food for camel with ID: " + camelUID);
+                    Blynk.logEvent("alarm", "Dropping 2.5KG of food for camel with ID: " + camelUID);
                     foodType = "alfalafa";
                     foodDropped = 2.5;
 
@@ -309,11 +318,13 @@ void loop()
                     motor(2);
                     isFoodDropped = true;
                     Serial.println("Evening: Dropping 5KG of food for camel with ID: " + camelUID);
+                    Blynk.logEvent("alarm", "Dropping 5KG of food for camel with ID: " + camelUID);
                 }
                 else if (currentTime.hour >= 15){
                     motor(1);
                     isFoodDropped = true;
                     Serial.println("Evening: Dropping 2.5KG of barley for camel with ID: " + camelUID);
+                    Blynk.logEvent("alarm", "Dropping 2.5KG of barley for camel with ID: " + camelUID);
                     foodType = "barley";
                     foodDropped = 2.5;
                 }
@@ -321,7 +332,7 @@ void loop()
                 {
                     isFoodDropped = false;
                     Serial.println("No food dropped");
-                    Blynk.logEvent("No food dropped");
+                    Blynk.logEvent("alarm", "No food dropped");
                 }
                                 while (camelFinishedEating() == false) {
                                     isCamelDoneEating = false;
@@ -355,7 +366,7 @@ void loop()
                                         data.amountDropped = foodDropped;
                                         //sendToBlynk(data);
                                         Serial.println("Data sent to Blynk");
-                                        Blynk.logEvent("Camel with ID: " + camelUID + " has finished eating");
+                                        Blynk.logEvent("alarm", "Camel with ID: " + camelUID + " has finished eating");
                                         sendData(data);
                                     }
                               }
@@ -363,7 +374,7 @@ void loop()
                               {
                                     isTimeDetected = false;
                                     Serial.println("No time detected");
-                                    Blynk.logEvent("No time detected");
+                                    Blynk.logEvent("alarm", "No time detected");
                               }
                             }
                     else
@@ -393,7 +404,7 @@ void loop()
                     isDispenserReady = false;
                     Serial.println("All chambers are empty");
                     //send notification to refill the compartments
-                    Blynk.logEvent("All compartments are empty. Please refill the compartments");
+                    Blynk.logEvent("alarm", "All compartments are empty. Please refill the compartments");
                     }
                     else{
                       Serial.println("Chambers remaining: ");
