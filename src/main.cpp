@@ -38,46 +38,46 @@
 char ssid[] = "nemo";
 char pass[] = "nemo1234";
 //mqtt broaker
-// const char* mqtt_server = "8008fde5131742c59e6a658482d0693a.s1.eu.hivemq.cloud";
-// const char* mqtt_username = "username";
-// const char* mqtt_password = "password";
-// const int mqtt_port =8883;
+const char* mqtt_server = "8008fde5131742c59e6a658482d0693a.s1.eu.hivemq.cloud";
+const char* mqtt_username = "username";
+const char* mqtt_password = "password";
+const int mqtt_port =8883;
 
 
-// WiFiClient espClient;
-// PubSubClient client(espClient);
+WiFiClient espClient;
+PubSubClient client(espClient);
 
-// unsigned long lastMsg = 0;
-// #define MSG_BUFFER_SIZE (50)
-// char msg[MSG_BUFFER_SIZE];
+unsigned long lastMsg = 0;
+#define MSG_BUFFER_SIZE (50)
+char msg[MSG_BUFFER_SIZE];
 
-// /**** Method for Publishing MQTT Messages **********/
-// void publishMessage(const char* topic, String payload , boolean retained){
-//   if (client.publish(topic, payload.c_str(), true))
-//       Serial.println("Message publised ["+String(topic)+"]: "+payload);
-// }
+/**** Method for Publishing MQTT Messages **********/
+void publishMessage(const char* topic, String payload , boolean retained){
+  if (client.publish(topic, payload.c_str(), true))
+      Serial.println("Message publised ["+String(topic)+"]: "+payload);
+}
 
 /************* Connect to MQTT Broker ***********/
-// void reconnect() {
-//   // Loop until we're reconnected
-//   while (!client.connected()) {
-//     Serial.print("Attempting MQTT connection...");
-//     String clientId = "MQTT_FX_Client";   // Create a random client ID
-//     clientId += String(random(0xffff), HEX);
-//     // Attempt to connect
-//     if (client.connect(clientId.c_str(), mqtt_username, mqtt_password)) {
-//       Serial.println("connected");
+void reconnect() {
+  // Loop until we're reconnected
+  while (!client.connected()) {
+    Serial.print("Attempting MQTT connection...");
+    String clientId = "MQTT_FX_Client";   // Create a random client ID
+    clientId += String(random(0xffff), HEX);
+    // Attempt to connect
+    if (client.connect(clientId.c_str(), mqtt_username, mqtt_password)) {
+      Serial.println("connected");
 
-//       client.subscribe("data");   // subscribe the topics here
+      client.subscribe("data");   // subscribe the topics here
 
-//     } else {
-//       Serial.print("failed, rc=");
-//       Serial.print(client.state());
-//       Serial.println(" try again in 5 seconds");   // Wait 5 seconds before retrying
-//       delay(5000);
-//     }
-//   }
-// }
+    } else {
+      Serial.print("failed, rc=");
+      Serial.print(client.state());
+      Serial.println(" try again in 5 seconds");   // Wait 5 seconds before retrying
+      delay(5000);
+    }
+  }
+}
 
 bool camelFinishedEating() {
   float weightChangeThreshold = 100; // change in weight threshold
@@ -174,22 +174,22 @@ struct time_log {
 };
 
 
-// void sendData(BlynkData1 data) {
-//   DynamicJsonDocument doc(1024);
+void sendData(BlynkData1 data) {
+  DynamicJsonDocument doc(1024);
 
 
-//   doc["camelUID"] = data.camelUID;
-//   doc["time"] = data.time;
-//   doc["weightOfConsumedFood"] = data.weightOfConsumedFood;
-//   doc["consumptionTime"] = data.consumptionTime;
-//   doc["foodType"] = data.foodType;
-//   doc["amountDropped"] = data.amountDropped;
+  doc["camelUID"] = data.camelUID;
+  doc["time"] = data.time;
+  doc["weightOfConsumedFood"] = data.weightOfConsumedFood;
+  doc["consumptionTime"] = data.consumptionTime;
+  doc["foodType"] = data.foodType;
+  doc["amountDropped"] = data.amountDropped;
 
-//   char jsonBuffer[128];
-//   serializeJson(doc, jsonBuffer);  // Convert JSON document to string
+  char jsonBuffer[128];
+  serializeJson(doc, jsonBuffer);  // Convert JSON document to string
 
-//   publishMessage("data", jsonBuffer, true);
-// }
+  publishMessage("data", jsonBuffer, true);
+}
 
 time_log currentTime;
 components componentStatus;
@@ -309,11 +309,10 @@ void loop()
             Serial.println("camel ID:");
             Serial.println(camelUID);
             isCamelIDDetected = true;
-            // if (isCamelIDDetected){
-            //     Blynk.virtualWrite(RFID_SENSOR_PIN, camelUID);
-            //   }
+            
+            
             }
-            //Blynk.logEvent("rfid_read_confirm");
+            
           }
 
           Blynk.logEvent("rfid_read_confirm");
@@ -439,42 +438,12 @@ void loop()
                     }
                     
 
-                    //make sure all flags are true then send data to blynk
-                    //create function to send data to blynk
-                    //send alerts if any error occured mid session and have exception handling.
+                    
                   }
                   
                 }
 
-// bool camelFinishedEating() {
-//   float weightChangeThreshold = 0.1; // change in weight threshold
-//   int time_in_seconds = millis()/1000;
-//   // Read motion sensor
-//   int motionValue = digitalRead(motionSensorPin);
 
-//   // Read weight sensor
-//   float currentWeight = readScale();
-
-//   // Wait for a brief moment to stabilize readings (optional)
-//   delay(100);
-
-//   // Read weight sensor again after a brief delay
-//   int newWeight = readScale();
-
-//   // Calculate weight change
-//   float weightChange = abs(newWeight - currentWeight);
-
-//   // Check if there is no motion and no significant change in weight
-//   if (motionValue == LOW && weightChange < weightChangeThreshold) {
-    
-//     return true;  // Camel has finished eating
-//   }
-//   else
-//   {
-//     return false;  // Camel is still eating
-//     //write the struct to send data.
-//   }
-// }
 
 
 BLYNK_WRITE(V4)
@@ -488,40 +457,7 @@ BLYNK_WRITE(V4)
 }
 
 
-// struct BlynkData1 {
-//   String camelUID;
-//   String time;
-//   String foodType;
-//   float weightOfConsumedFood;
-//   float amountDropped;
-//   int consumptionTime;
-// };
-//replace the virtual pins with the actual pins
-// void sendToBlynk(BlynkData1 data) {
-//   Blynk.virtualWrite(RFID_SENSOR_PIN, data.camelUID);
-//   Blynk.virtualWrite(V5, data.time);
-//   Blynk.virtualWrite(V6, data.weightOfConsumedFood);
-//   Blynk.virtualWrite(V7, data.consumptionTime);
-//   Blynk.virtualWrite(V8, data.foodType);
-//   Blynk.virtualWrite(V9, data.amountDropped);
-// };
-
-//server
 
 
-// void sendData(BlynkData data) {
-//   JsonDocument doc(1024);
 
-//   doc["camelUID"] = data.camelUID;
-//   doc["time"] = data.time;
-//   doc["weightOfConsumedFood"] = data.weightOfConsumedFood;
-//   doc["consumptionTime"] = data.consumptionTime;
-//   doc["foodType"] = data.foodType;
-//   doc["amountDropped"] = data.amountDropped;
-
-//   char jsonBuffer[128];
-//   serializeJson(doc, jsonBuffer);  // Convert JSON document to string
-
-//   client.publish("data", jsonBuffer);
-// }
 
