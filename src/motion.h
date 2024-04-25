@@ -33,7 +33,7 @@ void motionSensor(bool &state) {
 
         // If motion is detected, turn on the LED
         digitalWrite(ledPin, HIGH);
-
+       // Blynk.virtualWrite(V11, 1);
         // Print message to console
         Serial.println("Motion detected!"); 
         state = true;
@@ -42,7 +42,7 @@ void motionSensor(bool &state) {
 
         // If no motion is detected, turn off the LED
         digitalWrite(ledPin, LOW);
-
+        //Blynk.virtualWrite(V11, 0);
         // Print message to console
         Serial.println("No motion detected.");
         state = false;

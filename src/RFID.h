@@ -29,7 +29,7 @@ void setupRFID(bool &state) {
     return;
   }
 
-  Serial.println("RFID is reading..............");
+  //Serial.println("RFID is reading..............");
  
   // If a new card is detected, read its UID
   if (rfid.PICC_ReadCardSerial()) {
@@ -38,7 +38,7 @@ void setupRFID(bool &state) {
     }
 
     // Print the card's UID to the serial monitor
-    Serial.println(tag);
+    //Serial.println(tag);
     state = true;
 
     // Terminate the reading process

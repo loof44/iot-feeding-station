@@ -10,5 +10,5 @@ void connectToNetwork(const char* ssid, const char* password, bool &state) {
     }
     state = true;
 
-    Serial.println("Connected to WiFi");
+   // Serial.println("Connected to WiFi");
 }
