@@ -371,7 +371,7 @@ void loop()
                                    if (isCamelDoneEating) {
                                         //Serial.println("Camel has finished eating");
                                         currentWeight = readScale();
-                                        weightOfConsumedFood = 2500.0 - currentWeight;
+                                        weightOfConsumedFood = currentWeight;
                                         //Serial.println("Current weight: ");
                                         //Serial.println(currentWeight);
                                         //send data to blynk
