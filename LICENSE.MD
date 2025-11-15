@@ -1,25 +1,21 @@
-# Thesis License
+MIT License
 
-This work, including but not limited to the written report, code, technical diagrams, and any other associated materials, is subject to the following terms:
+Copyright (c) 2024 Khalifa AlSaadi
 
-## Copyright
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
 
-The copyright for this thesis is held by the American University in Dubai.
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
 
-## Permissions
-
-- You are granted permission to use, reproduce, distribute, and display this thesis in any medium or format for educational and non-commercial purposes, provided appropriate credit is given to the authors.
-- Modification of this thesis is permitted for educational and non-commercial purposes, provided that any derivative works are clearly marked as such and are distributed under the same terms as this license.
-
-## Restrictions
-
-- Commercial use of this thesis, or any part thereof, is strictly prohibited without prior written permission from the American University in Dubai.
-- You may not sublicense, sell, or otherwise commercialize this thesis or any derivative works without explicit permission.
-
-## Contact
-
-For inquiries regarding commercial or other use of this thesis, please contact [Ommitted]
-
-## Disclaimer
-
-This thesis is provided on an "as is" basis, without warranties or conditions of any kind, either express or implied, including, without limitation, any warranties or conditions of title, non-infringement, merchantability, or fitness for a particular purpose. The American University in Dubai shall not be liable for any damages arising out of the use of this thesis.
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
