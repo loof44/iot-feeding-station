@@ -3,7 +3,7 @@
 
 The `src` folder contains the PlatformIO firmware for the NodeMCU v2 controller that runs the smart feeding station. The sketch now:
 
-- Connects directly to Wi-Fi and publishes telemetry to an MQTT broker (no Blynk dependency).
+- Connects directly to Wi-Fi and publishes telemetry to an MQTT broker.
 - Streams structured JSON for telemetry (`feeding/data`), component health (`feeding/status/components`), and high-level events (`feeding/events`).
 - Accepts MQTT commands on `feeding/commands` (e.g., refill requests) so that the dashboard or any backend can control the feeder.
 
